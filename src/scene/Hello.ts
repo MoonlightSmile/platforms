@@ -1,6 +1,5 @@
 import * as Phaser from "phaser";
 class Hello extends Phaser.Scene {
-  bg: Phaser.GameObjects.TileSprite;
   public constructor() {
     super({ key: "hello" });
   }
@@ -61,14 +60,65 @@ class Hello extends Phaser.Scene {
     ]);
   }
   public create() {
-    const { width, height } = this.game.config;
-    this.bg = this.add
-      .tileSprite(0, 0, width as number, height as number, "background")
-      .setOrigin(0, 0)
-      .setScale(2);
-  }
-  public update() {
-    this.bg.tilePositionY -= 0.3;
+    this.scene.start("start");
+    this.anims.create({
+      key: "ship1_anim",
+      frames: this.anims.generateFrameNumbers("ship", null),
+      frameRate: 20,
+      repeat: -1
+    });
+    this.anims.create({
+      key: "ship2_anim",
+      frames: this.anims.generateFrameNumbers("ship2", null),
+      frameRate: 20,
+      repeat: -1
+    });
+    this.anims.create({
+      key: "ship3_anim",
+      frames: this.anims.generateFrameNumbers("ship3", null),
+      frameRate: 20,
+      repeat: -1
+    });
+
+    this.anims.create({
+      key: "explode",
+      frames: this.anims.generateFrameNumbers("explosion", null),
+      frameRate: 20,
+      repeat: 0,
+      hideOnComplete: true
+    });
+
+    this.anims.create({
+      key: "red",
+      frames: this.anims.generateFrameNumbers("power-up", {
+        start: 0,
+        end: 1
+      }),
+      frameRate: 20,
+      repeat: -1
+    });
+    this.anims.create({
+      key: "gray",
+      frames: this.anims.generateFrameNumbers("power-up", {
+        start: 2,
+        end: 3
+      }),
+      frameRate: 20,
+      repeat: -1
+    });
+    this.anims.create({
+      key: "thrust",
+      frames: this.anims.generateFrameNumbers("player", null),
+      frameRate: 20,
+      repeat: -1
+    });
+
+    this.anims.create({
+      key: "beam_anim",
+      frames: this.anims.generateFrameNumbers("beam", null),
+      frameRate: 20,
+      repeat: -1
+    });
   }
 }
 
