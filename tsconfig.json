@@ -6,7 +6,11 @@
     "module": "es6",
     "target": "es5",
     "allowJs": true,
-    "typeRoots": ["./node_modules/@types", "./node_modules/phaser/types"],
+    "typeRoots": [
+      "./node_modules/@types",
+      "./node_modules/phaser/types",
+      "./src/types"
+    ],
     "types": ["Phaser"]
   }
 }

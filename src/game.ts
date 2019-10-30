@@ -1,16 +1,17 @@
 import * as Phaser from "phaser";
-import Hello from "./scene/Hello";
+import Loading from "./scene/Loading";
 import Start from "./scene/Start";
 const config: Phaser.Types.Core.GameConfig = {
   type: Phaser.AUTO,
-  width: 512,
-  height: 544,
+  width: 960,
+  height: 600,
   physics: {
     default: "arcade",
     arcade: {
+      gravity: { y: 1200 },
       debug: true
     }
   },
-  scene: [Hello, Start]
+  scene: [Loading, Start]
 };
 new Phaser.Game(config);
