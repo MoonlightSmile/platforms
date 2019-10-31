@@ -20,7 +20,7 @@ module.exports = {
   },
   plugins: [
     new HtmlWebpackPlugin({
-      title: "Ship",
+      title: "platforms",
       template: path.resolve(__dirname, "index.html"),
       favicon: path.resolve(__dirname, "favicon.ico")
     })

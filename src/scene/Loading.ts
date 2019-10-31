@@ -7,7 +7,7 @@ class Hello extends Phaser.Scene {
     this.load.json("level:0", "data/level00.json");
     this.load.json("level:1", "data/level01.json");
 
-    this.load.image("font:numbers", "images/numbers.png");
+    this.load.bitmapFont("font", "images/font.png", "images/font.fnt");
 
     this.load.image("icon:coin", "images/coin_icon.png");
     this.load.image("background", "images/background.png");
