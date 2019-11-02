@@ -21,7 +21,7 @@ class Start extends Phaser.Scene {
   constructor() {
     super({ key: "start" });
     this.hasKey = false;
-    this.level = 1;
+    this.level = 0;
   }
 
   public create() {
