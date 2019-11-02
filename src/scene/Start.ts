@@ -13,19 +13,29 @@ class Start extends Phaser.Scene {
   public hud: Phaser.GameObjects.Group;
   public coinPickupCount: number = 0;
   public count: Phaser.GameObjects.BitmapText;
+  public key: Phaser.Physics.Arcade.Sprite;
+  public door: Phaser.Physics.Arcade.Sprite;
+  public hasKey: boolean;
+  public keyIcon: Phaser.GameObjects.Sprite;
+  public level: number;
   constructor() {
     super({ key: "start" });
+    this.hasKey = false;
+    this.level = 1;
   }
 
   public create() {
+    this.sound.stopAll();
+    this.sound.play("bgm", { loop: true });
     this.background = this.add.image(0, 0, "background").setOrigin(0, 0);
-    // this.sound.play("bgm", { loop: true });
+
     this.platforms = this.physics.add.staticGroup();
     this.coins = this.physics.add.staticGroup();
     this.enemyWalls = this.physics.add.staticGroup();
     this.spiders = this.add.group();
     this.hud = this.add.group();
-    this._loadLevel(this.cache.json.get("level:1"));
+
+    this._loadLevel(this.cache.json.get(`level:${this.level}`));
     this.cursorKeys = this.input.keyboard.createCursorKeys();
     this._createHud();
 
@@ -35,6 +45,8 @@ class Start extends Phaser.Scene {
     this.physics.add.collider(this.spiders, this.enemyWalls);
 
     this.physics.add.overlap(this.hero, this.coins, this._eatCoin, null, this);
+    this.physics.add.overlap(this.hero, this.key, this._getKey, null, this);
+    this.physics.add.overlap(this.hero, this.door, this._touchDoor, null, this);
     this.physics.add.overlap(
       this.hero,
       this.spiders,
@@ -43,6 +55,19 @@ class Start extends Phaser.Scene {
       this
     );
   }
+  private _touchDoor(hero: Player, door: Phaser.Physics.Arcade.Sprite): void {
+    if (this.hasKey) {
+      this.sound.play("sfx:door");
+      this.hasKey = false;
+      this.level += 1;
+      this.scene.restart();
+    }
+  }
+  private _getKey(hero: Player, key: Phaser.Physics.Arcade.Sprite): void {
+    this.hasKey = true;
+    this.sound.play("sfx:key");
+    key.destroy();
+  }
   private _eatCoin(hero: Player, coin: Phaser.GameObjects.GameObject): void {
     this.coinPickupCount += 1;
     this.sound.play("sfx:coin");
@@ -50,10 +75,10 @@ class Start extends Phaser.Scene {
   }
   private _createHud(): void {
     // ...
+    this.keyIcon = this.hud.create(10, 13, "icon:key").setOrigin(0, 0);
     const icon = this.hud
-      .create(0, 0, "icon:coin")
-      .setOrigin(0, 0)
-      .setPosition(10, 10);
+      .create(this.keyIcon.x + this.keyIcon.width + 10, 10, "icon:coin")
+      .setOrigin(0, 0);
     this.count = this.add.bitmapText(
       icon.x + icon.width + 5,
       icon.height / 2,
@@ -63,7 +88,23 @@ class Start extends Phaser.Scene {
     this.hud.add(this.count);
   }
   private _loadLevel(json: Level): void {
-    const { platforms, hero, coins, spiders } = json;
+    const { platforms, hero, coins, spiders, key, door, decoration } = json;
+    this.key = this.physics.add.staticSprite(key.x, key.y, "key");
+    decoration.forEach(({ x, y, frame }) => {
+      this.add.image(x, y, "decoration", frame).setOrigin(0, 0);
+    });
+    this.door = this.physics.add
+      .staticSprite(door.x, door.y, "door")
+      .setOrigin(1, 1)
+      .refreshBody();
+    this.add.tween({
+      targets: this.key,
+      duration: 800,
+      y: "+=6",
+      ease: "Sine.easeInOut",
+      repeat: -1,
+      yoyo: true
+    });
     platforms.forEach(this.__spawnPlatform, this);
     coins.forEach(this._spawnCoin, this);
     spiders.forEach(this._spawnSpider, this);
@@ -80,6 +121,7 @@ class Start extends Phaser.Scene {
       this.sound.play("sfx:stomp");
     } else {
       this.sound.play("sfx:stomp");
+      this.hasKey = false;
       hero.die();
     }
   }
@@ -121,7 +163,9 @@ class Start extends Phaser.Scene {
     this._inputHander();
     this.count.text = `x${String(this.coinPickupCount)}`;
     this.spiders.getChildren().forEach(spider => spider.update());
-    this.hero.update()
+    this.hero.update();
+    this.keyIcon.setFrame(this.hasKey ? 1 : 0);
+    this.door.setFrame(this.hasKey ? 1 : 0);
   }
 }
 
