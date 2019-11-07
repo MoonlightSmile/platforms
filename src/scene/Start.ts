@@ -25,6 +25,7 @@ class Start extends Phaser.Scene {
   }
 
   public create() {
+    this.cameras.main.flash(300, 0, 0, 0);
     this.sound.stopAll();
     this.sound.play("bgm", { loop: true });
     this.background = this.add.image(0, 0, "background").setOrigin(0, 0);
@@ -153,8 +154,7 @@ class Start extends Phaser.Scene {
     } else {
       this.hero.move(0);
     }
-
-    if (up.isDown) {
+    if (Phaser.Input.Keyboard.JustDown(up)) {
       this.hero.jump();
     }
   }

@@ -6,6 +6,7 @@ class Hello extends Phaser.Scene {
   public preload() {
     this.load.json("level:0", "data/level00.json");
     this.load.json("level:1", "data/level01.json");
+    this.load.json("level:2", "data/level02.json");
 
     this.load.bitmapFont("font", "images/font.png", "images/font.fnt");
 

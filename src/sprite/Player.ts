@@ -16,6 +16,7 @@ class Player extends Phaser.Physics.Arcade.Sprite {
     this.play("stop");
     this.setCollideWorldBounds(true);
   }
+
   private _initAnims(): void {
     this.scene.anims.create({
       key: "stop",
@@ -23,10 +24,7 @@ class Player extends Phaser.Physics.Arcade.Sprite {
     });
     this.scene.anims.create({
       key: "run",
-      frames: [1, 2].map(frame => ({
-        key: "hero",
-        frame
-      })),
+      frames: [1, 2].map(frame => ({ key: "hero", frame })),
       frameRate: 8,
       repeat: -1
     });
@@ -38,6 +36,18 @@ class Player extends Phaser.Physics.Arcade.Sprite {
       key: "fall",
       frames: [{ key: "hero", frame: 4 }]
     });
+    this.scene.anims.create({
+      key: "player_die",
+      frames: [5, 6, 5, 6, 5, 6, 5, 6].map(frame => ({ key: "hero", frame })),
+      frameRate: 8
+    });
+    this.on("animationcomplete", (a: any) => {
+      const { key } = a;
+      if (key === "player_die") {
+        this.body.setEnable(true);
+        this.scene.scene.restart();
+      }
+    });
   }
   private _getAnimationName(): string {
     let name = "stop";
@@ -45,7 +55,9 @@ class Player extends Phaser.Physics.Arcade.Sprite {
       velocity: { x, y },
       touching: { down }
     } = this.body;
-    if (y < 0) {
+    if (!this.body.enable) {
+      name = "player_die";
+    } else if (y < 0) {
       name = "jump";
     } else if (y >= 0 && !down) {
       name = "fall";
@@ -67,7 +79,9 @@ class Player extends Phaser.Physics.Arcade.Sprite {
     }
   }
   public die(): void {
-    this.scene.scene.restart();
+    this.body.setEnable(false);
+
+    // this.scene.scene.restart();
   }
   public jump(): void {
     const canJump = this.body.touching.down;
