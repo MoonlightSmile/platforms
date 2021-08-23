@@ -61,6 +61,10 @@ class Start extends Phaser.Scene {
       this.sound.play("sfx:door");
       this.hasKey = false;
       this.level += 1;
+      if (this.level === 3) {
+        alert("通关");
+        return;
+      }
       this.scene.restart();
     }
   }
@@ -104,7 +108,7 @@ class Start extends Phaser.Scene {
       y: "+=6",
       ease: "Sine.easeInOut",
       repeat: -1,
-      yoyo: true
+      yoyo: true,
     });
     platforms.forEach(this.__spawnPlatform, this);
     coins.forEach(this._spawnCoin, this);
@@ -162,7 +166,7 @@ class Start extends Phaser.Scene {
   public update() {
     this._inputHander();
     this.count.text = `x${String(this.coinPickupCount)}`;
-    this.spiders.getChildren().forEach(spider => spider.update());
+    this.spiders.getChildren().forEach((spider) => spider.update());
     this.hero.update();
     this.keyIcon.setFrame(this.hasKey ? 1 : 0);
     this.door.setFrame(this.hasKey ? 1 : 0);
